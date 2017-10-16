@@ -1,6 +1,11 @@
 package com.zjrb.sjzsw.http.api;
 
-public class ApiResponse<T> {
+/**
+ * 服务器返回结构体基类
+ * 注：可根据实际接口返回结构体配置基类
+ * Created by jinzifu on 2017/7/11.
+ */
+public class BaseResponse<T> {
     private String error_code;
     private String reason;
     private T result;

@@ -7,13 +7,13 @@ import android.widget.TextView;
 
 import com.zjrb.sjzsw.R;
 import com.zjrb.sjzsw.entity.TestBean;
-import com.zjrb.sjzsw.http.HttpManager;
+import com.zjrb.sjzsw.http.api.ApiManager;
 import com.zjrb.sjzsw.http.callback.OnResultCallBack;
-import com.zjrb.sjzsw.http.subscriber.HttpSubscriber;
+import com.zjrb.sjzsw.http.observer.CommonObserver;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private HttpSubscriber mHttpObserver;
+    private CommonObserver mHttpObserver;
     private TextView resultTv;
     private String result;
 
@@ -25,13 +25,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                result="";
+                result = "";
                 resultTv.setText("");
-                HttpManager.getInstance().getDatasWithCache(mHttpObserver, 1, 10, "json1", false);
+
+                ApiManager.commonSubscribe(ApiManager.getApiService().getDatas(1, 10, "json1"),mHttpObserver);
             }
         });
 
-        mHttpObserver = new HttpSubscriber(new OnResultCallBack<TestBean>() {
+        mHttpObserver = new CommonObserver(new OnResultCallBack<TestBean>() {
             @Override
             public void onSuccess(TestBean tb) {
                 for (TestBean.ListBean bean : tb.getList()) {

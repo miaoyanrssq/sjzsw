@@ -1,8 +1,7 @@
 package com.zjrb.sjzsw;
 
 import android.app.Application;
-
-import com.zjrb.sjzsw.http.HttpManager;
+import android.content.Context;
 
 
 /**
@@ -10,9 +9,15 @@ import com.zjrb.sjzsw.http.HttpManager;
  */
 
 public class App extends Application {
+    private static Context context;
     @Override
     public void onCreate() {
         super.onCreate();
-        HttpManager.init(this);//不做任何操作仅仅是缓存一下Application引用
+        context = getApplicationContext();
+//        HttpClient.init(this);
+    }
+
+    public static Context getContext() {
+        return context;
     }
 }

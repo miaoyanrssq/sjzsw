@@ -1,5 +1,6 @@
-package com.zjrb.sjzsw.http.subscriber;
+package com.zjrb.sjzsw.http.observer;
 
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 import com.zjrb.sjzsw.http.callback.OnResultCallBack;
 import com.zjrb.sjzsw.http.exception.ApiException;
 import com.google.gson.stream.MalformedJsonException;
@@ -14,11 +15,11 @@ import io.reactivex.exceptions.CompositeException;
 import io.rx_cache2.RxCacheException;
 
 
-public class HttpSubscriber<T> implements Observer<T> {
+public class CommonObserver<T> implements Observer<T> {
     private OnResultCallBack mOnResultListener;
     private Disposable mDisposable;
 
-    public HttpSubscriber(OnResultCallBack listener) {
+    public CommonObserver(OnResultCallBack listener) {
         this.mOnResultListener = listener;
     }
 
@@ -36,6 +37,7 @@ public class HttpSubscriber<T> implements Observer<T> {
 
     @Override
     public void onError(Throwable e) {
+        if (e instanceof HttpException)
         if (e instanceof CompositeException) {
             CompositeException compositeE=(CompositeException)e;
             for (Throwable throwable : compositeE.getExceptions()) {
