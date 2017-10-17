@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.zjrb.sjzsw.App;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,8 +16,8 @@ public class NetUtil {
 	/**
 	 * 检测网络是否连接
 	 */
-	public static boolean isNetConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	public static boolean isNetConnected() {
+        ConnectivityManager cm = (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (cm != null) {
 			NetworkInfo[] infos = cm.getAllNetworkInfo();
 			if (infos != null) {
@@ -32,8 +34,8 @@ public class NetUtil {
 	/**
 	 * 检测wifi是否连接
 	 */
-	public static boolean isWifiConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	public static boolean isWifiConnected() {
+        ConnectivityManager cm = (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (cm != null) {
 			NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 			if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
@@ -46,8 +48,8 @@ public class NetUtil {
 	/**
 	 * 检测3G是否连接
 	 */
-	public static boolean is3gConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	public static boolean is3gConnected() {
+        ConnectivityManager cm = (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (cm != null) {
 			NetworkInfo networkInfo = cm.getActiveNetworkInfo();
 			if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {

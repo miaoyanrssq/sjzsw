@@ -2,20 +2,21 @@ package com.zjrb.sjzsw.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
 import com.zjrb.sjzsw.R;
-import com.zjrb.sjzsw.entity.TestBean;
-import com.zjrb.sjzsw.http.api.ApiManager;
+import com.zjrb.sjzsw.entity.GirlList;
+import com.zjrb.sjzsw.http.api.CustomApi;
+import com.zjrb.sjzsw.http.api.HttpClient;
 import com.zjrb.sjzsw.http.callback.OnResultCallBack;
+import com.zjrb.sjzsw.http.exception.ApiException;
 import com.zjrb.sjzsw.http.observer.CommonObserver;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private CommonObserver mHttpObserver;
+    private CommonObserver commonObserver;
     private TextView resultTv;
-    private String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,25 +26,23 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                result = "";
                 resultTv.setText("");
 
-                ApiManager.commonSubscribe(ApiManager.getApiService().getDatas(1, 10, "json1"),mHttpObserver);
+                CustomApi customApi = HttpClient.getInstance().customApiService();
+                HttpClient.getInstance().customApiExecute(customApi.getGirls("9ea08bbe593c23393780a4d5a7fa35cd",50), commonObserver);
             }
         });
 
-        mHttpObserver = new CommonObserver(new OnResultCallBack<TestBean>() {
+        commonObserver = new CommonObserver(new OnResultCallBack<GirlList>() {
             @Override
-            public void onSuccess(TestBean tb) {
-                for (TestBean.ListBean bean : tb.getList()) {
-                    result += bean.toString();
-                }
-                resultTv.setText(result);
+            public void onSuccess(GirlList tb) {
+                if (tb == null) return;
+                resultTv.setText(""+tb.getNewslist().size());
             }
 
             @Override
-            public void onError(int code, String errorMsg) {
-                resultTv.setText("onError: code:" + code + "  errorMsg:" + errorMsg);
+            public void onError(ApiException.ResponeThrowable e) {
+                resultTv.setText("onError: errorMsg:" + e.getMessage());
             }
         });
     }
@@ -51,7 +50,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mHttpObserver.unSubscribe();
+        commonObserver.unSubscribe();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            resultTv.setText("");
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
 

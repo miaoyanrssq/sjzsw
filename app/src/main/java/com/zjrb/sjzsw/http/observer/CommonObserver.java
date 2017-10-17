@@ -1,18 +1,10 @@
 package com.zjrb.sjzsw.http.observer;
 
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
 import com.zjrb.sjzsw.http.callback.OnResultCallBack;
 import com.zjrb.sjzsw.http.exception.ApiException;
-import com.google.gson.stream.MalformedJsonException;
-
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.exceptions.CompositeException;
-import io.rx_cache2.RxCacheException;
 
 
 public class CommonObserver<T> implements Observer<T> {
@@ -37,32 +29,10 @@ public class CommonObserver<T> implements Observer<T> {
 
     @Override
     public void onError(Throwable e) {
-        if (e instanceof HttpException)
-        if (e instanceof CompositeException) {
-            CompositeException compositeE=(CompositeException)e;
-            for (Throwable throwable : compositeE.getExceptions()) {
-                if (throwable instanceof SocketTimeoutException) {
-                    mOnResultListener.onError(ApiException.Code_TimeOut,ApiException.SOCKET_TIMEOUT_EXCEPTION);
-                } else if (throwable instanceof ConnectException) {
-                    mOnResultListener.onError(ApiException.Code_UnConnected,ApiException.CONNECT_EXCEPTION);
-                } else if (throwable instanceof UnknownHostException) {
-                    mOnResultListener.onError(ApiException.Code_UnConnected,ApiException.CONNECT_EXCEPTION);
-                } else if (throwable instanceof RxCacheException) {
-                    //缓存异常暂时不做处理
-                }  else if (throwable instanceof MalformedJsonException) {
-                    mOnResultListener.onError(ApiException.Code_MalformedJson,ApiException.MALFORMED_JSON_EXCEPTION);
-                }
-            }
-        }else {
-            String msg = e.getMessage();
-            int code;
-            if (msg.contains("#")) {
-                code = Integer.parseInt(msg.split("#")[0]);
-                mOnResultListener.onError(code, msg.split("#")[1]);
-            } else {
-                code = ApiException.Code_Default;
-                mOnResultListener.onError(code, msg);
-            }
+        if (e instanceof ApiException.ResponeThrowable) {
+            mOnResultListener.onError((ApiException.ResponeThrowable) e);
+        } else {
+            mOnResultListener.onError(new ApiException.ResponeThrowable(e, ApiException.ERROR.UNKNOWN));
         }
     }
 
