@@ -1,7 +1,5 @@
 package com.zjrb.sjzsw.entity;
 
-import com.zjrb.sjzsw.http.api.BaseResponse;
-
 import java.util.List;
 
 /**
@@ -10,7 +8,7 @@ import java.util.List;
  * 类描述:
  */
 
-public class GirlList extends BaseResponse{
+public class GirlList {
     private List<NewslistBean> newslist;
 
     public List<NewslistBean> getNewslist() {
