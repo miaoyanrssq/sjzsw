@@ -60,6 +60,9 @@ public class HttpClient {
             }
         }).setLevel(HttpLoggingInterceptor.Level.BODY);
 
+        //网络代理
+//        Proxy proxy = new Proxy(Proxy.Type.HTTP,  new InetSocketAddress(proxyHost, proxyPort));
+
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
@@ -68,8 +71,10 @@ public class HttpClient {
                 .addInterceptor(new HeaderInterceptor(headerMap))
                 .addInterceptor(loggingInterceptor)
                 .addInterceptor(caheInterceptor)
+//                .proxy(proxy)
                 .addNetworkInterceptor(caheInterceptor)
                 .cache(cache);
+        //https请求 HostnameVerifier默认信任所有证书,如果要添加证书可参考 https://www.2cto.com/kf/201609/551319.html
 
         mRetrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
@@ -90,6 +95,13 @@ public class HttpClient {
         return instance;
     }
 
+    /**
+     * @param observable
+     * @param observer
+     * @param <T>        例如：
+     *                   ApiService customApi = HttpClient.getInstance().apiServiceCreate();
+     *                   HttpClient.getInstance().execute(customApi.getGirls(1, 10, "json1"), commonObserver);
+     */
     public <T> void execute(Observable<T> observable, Observer<?> observer) {
         observable
                 .compose(schedulersTransformer)
@@ -137,12 +149,4 @@ public class HttpClient {
 //            return response.getData();
 //        }
 //    }
-
-    /**
-     * @param observable
-     * @param observer
-     * @param <T>        例如：
-     *                   ApiService customApi = HttpClient.getInstance().apiServiceCreate();
-     *                   HttpClient.getInstance().execute(customApi.getGirls(1, 10, "json1"), commonObserver);
-     */
 }
