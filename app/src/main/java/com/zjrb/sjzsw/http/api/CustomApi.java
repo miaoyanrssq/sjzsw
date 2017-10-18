@@ -15,6 +15,6 @@ import retrofit2.http.Query;
 public interface CustomApi {
 
     @GET("meinv/")
-    Observable<BaseResponse<GirlList>> getGirls(@Query("key") String key, @Query("num") int num);
+    Observable<GirlList> getGirls(@Query("key") String key, @Query("num") int num);
 
 }

@@ -161,7 +161,7 @@ public class HttpClient {
         @Override
         public ObservableSource apply(Observable upstream) {
             //onErrorResumeNext当发生错误的时候，由另外一个Observable来代替当前的Observable并继续发射数据
-            return (Observable<T>) upstream.map(new HandleFunction<T>()).onErrorResumeNext(new HttpResponseFunction<T>());
+            return (Observable<T>) upstream.onErrorResumeNext(new HttpResponseFunction<T>());
         }
     }
 
@@ -172,15 +172,15 @@ public class HttpClient {
         }
     }
 
-    public static class HandleFunction<T> implements Function<BaseResponse<T>, T> {
-        @Override
-        public T apply(BaseResponse<T> response) throws Exception {
-            if (!response.isOk()) {
-                throw new RuntimeException(response.getCode() + "" + response.getMsg() != null ? response.getMsg() : "");
-            }
-            return response.getData();
-        }
-    }
+//    public static class HandleFunction<T> implements Function<BaseResponse<T>, T> {
+//        @Override
+//        public T apply(BaseResponse<T> response) throws Exception {
+//            if (!response.isOk()) {
+//                throw new RuntimeException(response.getCode() + "" + response.getMsg() != null ? response.getMsg() : "");
+//            }
+//            return response.getData();
+//        }
+//    }
 
     /**
      * @param observable
@@ -189,7 +189,7 @@ public class HttpClient {
      *                   CustomApi customApi = HttpClient.getInstance().customApiService();
      *                   HttpClient.getInstance().customApiExecute(customApi.getGirls(1, 10, "json1"), commonObserver);
      */
-    public <T> void customApiExecute(Observable<BaseResponse<T>> observable, Observer<?> observer) {
+    public <T> void customApiExecute(Observable<T> observable, Observer<?> observer) {
         observable.compose(schedulersTransformer)
                 .compose(transformer)
                 .subscribe(observer);

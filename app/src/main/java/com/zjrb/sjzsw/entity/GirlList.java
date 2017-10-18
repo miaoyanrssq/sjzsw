@@ -9,7 +9,25 @@ import java.util.List;
  */
 
 public class GirlList {
+    private int code;
+    private String msg;
     private List<NewslistBean> newslist;
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
     public List<NewslistBean> getNewslist() {
         return newslist;
@@ -21,11 +39,11 @@ public class GirlList {
 
     public static class NewslistBean {
         /**
-         * ctime : 2016-12-04 21:00
-         * title : 粉弯玉足 baby嘉茵 纯纯学生装娇滴护士制服诱惑
-         * description : 美女写真
-         * picUrl : http://m.xxxiao.com/wp-content/uploads/sites/3/2016/10/m.xxxiao.com_0d30d85aff7811792723bc5305820c25-683x1024.jpg
-         * url : http://m.xxxiao.com/80515
+         * ctime : 2016-05-03 22:00
+         * title : G-STAR (House mix 2016)
+         * description : 华声美女
+         * picUrl : http://image.hnol.net/c/2016-05/03/20/20160503205013291-2137382.jpg
+         * url : http://bbs.voc.com.cn/mm/meinv-7243281-0-1.html
          */
 
         private String ctime;

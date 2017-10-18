@@ -20,13 +20,13 @@ import retrofit2.http.QueryMap;
 public interface CommonApi<T> {
 
     @GET("{url}")
-    Observable<BaseResponse<GirlList>> executeGet(
+    Observable<GirlList> executeGet(
             @Path("url") String url,
             @QueryMap Map<String, String> maps
     );
 
     @POST("{url}")
-    Observable<BaseResponse<GirlList>> executePost(
+    Observable<GirlList> executePost(
             @Path("url") String url,
             @QueryMap Map<String, String> maps);
 
