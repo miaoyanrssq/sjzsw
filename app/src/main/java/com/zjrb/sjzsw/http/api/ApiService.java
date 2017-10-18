@@ -12,7 +12,7 @@ import retrofit2.http.Query;
  * Email:jinzifu123@163.com
  * 类描述:自定义API接口类型
  */
-public interface CustomApi {
+public interface ApiService {
 
     @GET("meinv/")
     Observable<GirlList> getGirls(@Query("key") String key, @Query("num") int num);

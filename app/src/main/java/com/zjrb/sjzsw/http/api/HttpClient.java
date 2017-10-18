@@ -12,7 +12,6 @@ import com.zjrb.sjzsw.http.interceptor.HeaderInterceptor;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -24,8 +23,6 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -34,18 +31,16 @@ public class HttpClient {
     private static final int DEFAULT_TIMEOUT = 5;
     private Retrofit mRetrofit;
     private volatile static HttpClient instance;
-    //    private GsonTSpeaker gsonTSpeaker = null;
     private Cache cache = null;
     private File httpCacheDirectory;
-    private CommonApi apiService;
-    private static ErrorTransformer transformer = new ErrorTransformer();
+    public static ErrorTransformer errorTransformer = new ErrorTransformer();
 
     private HttpClient() {
         //header追加
         HashMap<String, String> headerMap = new HashMap<String, String>();
-        CaheInterceptor caheInterceptor = new CaheInterceptor();
 
-        //缓存地址
+        //okhttp 3.0缓存
+        CaheInterceptor caheInterceptor = new CaheInterceptor();
         if (httpCacheDirectory == null) {
             httpCacheDirectory = new File(App.getContext().getCacheDir(), "zjrb_cache");
         }
@@ -54,7 +49,7 @@ public class HttpClient {
                 cache = new Cache(httpCacheDirectory, 10 * 1024 * 1024);
             }
         } catch (Exception e) {
-            Log.e("OKHttp", "Could not create http cache", e);
+            Log.e("OKHttp", "Could not apiServiceCreate http cache", e);
         }
 
 
@@ -95,73 +90,34 @@ public class HttpClient {
         return instance;
     }
 
-    public void get(String url, Map parameters, Observer<?> observer) {
-        apiService.executeGet(url, parameters)
+    public <T> void execute(Observable<T> observable, Observer<?> observer) {
+        observable
                 .compose(schedulersTransformer)
-                .compose(transformer)
+                .compose(errorTransformer)
                 .subscribe(observer);
     }
 
-    public void post(String url, Map<String, String> parameters, Observer<?> observer) {
-        apiService.executePost(url, parameters)
-                .compose(schedulersTransformer)
-                .compose(transformer)
-                .subscribe(observer);
+    public ApiService apiServiceCreate() {
+        return mRetrofit.create(ApiService.class);
     }
 
-    public void json(String url, RequestBody jsonStr, Observer<ResponseBody> observer) {
-
-        apiService.json(url, jsonStr)
-                .compose(schedulersTransformer)
-                .compose(transformer)
-                .subscribe(observer);
-    }
-
-    public void upload(String url, RequestBody requestBody, Observer<ResponseBody> observer) {
-        apiService.upLoadFile(url, requestBody)
-                .compose(schedulersTransformer)
-                .compose(transformer)
-                .subscribe(observer);
-    }
-
-    /**
-     * create BaseApi  defalte ApiManager
-     *
-     * @return ApiManager
-     */
-    public HttpClient createBaseApi() {
-        apiService = create(CommonApi.class);
-        return this;
-    }
-
-    /**
-     * create you ApiService
-     * Create an implementation of the API endpoints defined by the {@code service} interface.
-     */
-    public <T> T create(final Class<T> service) {
-        if (service == null) {
-            throw new RuntimeException("CustomApi service is null!");
-        }
-        return mRetrofit.create(service);
-    }
-
-    //处理线程调度的变换
+    //处理线程调度
     ObservableTransformer schedulersTransformer = new ObservableTransformer() {
         @Override
-        public ObservableSource apply(Observable upstream) {
-            return ((Observable) upstream).subscribeOn(Schedulers.io())
+        public ObservableSource apply(Observable observable) {
+            return ((Observable) observable).subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
         }
     };
 
-    //处理错误的变换
+    //处理数据及异常
     private static class ErrorTransformer<T> implements ObservableTransformer {
 
         @Override
-        public ObservableSource apply(Observable upstream) {
+        public ObservableSource apply(Observable observable) {
             //onErrorResumeNext当发生错误的时候，由另外一个Observable来代替当前的Observable并继续发射数据
-            return (Observable<T>) upstream.onErrorResumeNext(new HttpResponseFunction<T>());
+            return (Observable<T>) observable.onErrorResumeNext(new HttpResponseFunction<T>());
         }
     }
 
@@ -186,16 +142,7 @@ public class HttpClient {
      * @param observable
      * @param observer
      * @param <T>        例如：
-     *                   CustomApi customApi = HttpClient.getInstance().customApiService();
-     *                   HttpClient.getInstance().customApiExecute(customApi.getGirls(1, 10, "json1"), commonObserver);
+     *                   ApiService customApi = HttpClient.getInstance().apiServiceCreate();
+     *                   HttpClient.getInstance().execute(customApi.getGirls(1, 10, "json1"), commonObserver);
      */
-    public <T> void customApiExecute(Observable<T> observable, Observer<?> observer) {
-        observable.compose(schedulersTransformer)
-                .compose(transformer)
-                .subscribe(observer);
-    }
-
-    public CustomApi customApiService() {
-        return mRetrofit.create(CustomApi.class);
-    }
 }
