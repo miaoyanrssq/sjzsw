@@ -2,9 +2,9 @@ package com.zjrb.sjzsw.controller;
 
 import android.content.Context;
 
-import com.zjrb.sjzsw.http.api.ApiService;
-import com.zjrb.sjzsw.http.api.HttpClient;
-import com.zjrb.sjzsw.http.observer.CommonObserver;
+import com.jzf.net.api.HttpClient;
+import com.jzf.net.observer.CommonObserver;
+import com.zjrb.sjzsw.api.ApiManager;
 
 /**
  * Created by jinzifu on 2017/10/18.
@@ -25,7 +25,6 @@ public class MainController extends BaseController {
      * @param commonObserver
      */
     public void getGrils(String s, int i, CommonObserver commonObserver) {
-        ApiService customApi = HttpClient.getInstance().apiServiceCreate();
-        HttpClient.getInstance().execute(customApi.getGirls(s, i), commonObserver);
+        HttpClient.getInstance().execute(ApiManager.getApiService().getGirls(s, i), commonObserver);
     }
 }

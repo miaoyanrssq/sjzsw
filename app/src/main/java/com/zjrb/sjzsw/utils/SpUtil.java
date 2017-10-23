@@ -3,7 +3,7 @@ package com.zjrb.sjzsw.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.zjrb.sjzsw.Constant;
+import com.jzf.net.Constant;
 
 
 /**
