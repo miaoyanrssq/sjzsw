@@ -34,7 +34,11 @@ public class HttpClient {
     private Cache cache = null;
     private File httpCacheDirectory;
     private static Context context;
-    public static ErrorTransformer errorTransformer = new ErrorTransformer();
+
+    //静态内部类——饿汉式
+    private static SchedulersTransformer schedulersTransformer = new SchedulersTransformer();
+    private static ErrorTransformer errorTransformer = new ErrorTransformer();
+    private static HttpResponseFunction httpResponseFunction = new HttpResponseFunction();
 
     private HttpClient() {
         //header追加
@@ -85,8 +89,8 @@ public class HttpClient {
                 .build();
     }
 
-    public static void init(Context context){
-        HttpClient.context =context;
+    public static void init(Context context) {
+        HttpClient.context = context;
     }
 
 
@@ -120,14 +124,14 @@ public class HttpClient {
     }
 
     //处理线程调度
-    ObservableTransformer schedulersTransformer = new ObservableTransformer() {
+    private static class SchedulersTransformer<T> implements ObservableTransformer {
         @Override
         public ObservableSource apply(Observable observable) {
             return ((Observable) observable).subscribeOn(Schedulers.io())
                     .unsubscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread());
         }
-    };
+    }
 
     //处理数据及异常
     private static class ErrorTransformer<T> implements ObservableTransformer {
@@ -135,11 +139,11 @@ public class HttpClient {
         @Override
         public ObservableSource apply(Observable observable) {
             //onErrorResumeNext当发生错误的时候，由另外一个Observable来代替当前的Observable并继续发射数据
-            return (Observable<T>) observable.onErrorResumeNext(new HttpResponseFunction<T>());
+            return (Observable<T>) observable.onErrorResumeNext(httpResponseFunction);
         }
     }
 
-    public static class HttpResponseFunction<T> implements Function<Throwable, Observable<T>> {
+    private static class HttpResponseFunction<T> implements Function<Throwable, Observable<T>> {
         @Override
         public Observable<T> apply(Throwable throwable) throws Exception {
             return Observable.error(ApiException.handleException(throwable));
