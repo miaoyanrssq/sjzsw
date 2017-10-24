@@ -1,6 +1,8 @@
 package com.zjrb.sjzsw.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -38,6 +40,7 @@ public class MainActivity extends BaseControllerActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn:
+//                mainController.testWeakHashMap(2);
                 mainController.getGrils("9ea08bbe593c23393780a4d5a7fa35cd", 50,
                         commonObserver = new CommonObserver(new OnResultCallBack<GirlList>() {
                             @Override
@@ -57,6 +60,8 @@ public class MainActivity extends BaseControllerActivity {
                         }));
                 break;
             case R.id.result:
+                startActivity(new Intent(MainActivity.this,TestActivity.class));
+                finish();
                 break;
         }
     }
@@ -73,7 +78,15 @@ public class MainActivity extends BaseControllerActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        commonObserver.unSubscribe();
+        if (null != commonObserver){
+            commonObserver.unSubscribe();
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        Log.e("MainActivity","已经执行回收了");
     }
 }
 

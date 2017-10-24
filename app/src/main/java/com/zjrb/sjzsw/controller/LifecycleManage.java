@@ -2,19 +2,21 @@ package com.zjrb.sjzsw.controller;
 
 import com.zjrb.sjzsw.listener.LifeCycle;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * Created by jinzifu on 2017/9/1.
  * 生命周期管理器
+ * 类描述：此模式并不能避免内存泄漏，只是提供了一种业务层和视图层解耦的思路，并支持绑定业务层与视图层的生命周期
  */
 
 public class LifecycleManage implements LifeCycle {
     private Map<String, LifeCycle> lifeCycleMap;
 
     public LifecycleManage() {
-        lifeCycleMap = new HashMap<String, LifeCycle>();
+        //WeakHashMap当系统内存不足时，垃圾收集器会自动的清除没有在任何其他地方被引用的键值对。
+        lifeCycleMap = new WeakHashMap<String, LifeCycle>();
     }
 
     public void register(String key, LifeCycle lifeCycle) {
@@ -59,7 +61,8 @@ public class LifecycleManage implements LifeCycle {
         for (Map.Entry<String, LifeCycle> entry : lifeCycleMap.entrySet()) {
             entry.getValue().onDestroy();
         }
-        lifeCycleMap.clear();//移除所有ctrl元素
+        lifeCycleMap.clear();//移除所有ctrl元素，但并未置空对象引用与回收对象内存
+
     }
 
     public LifeCycle get(String key) {
