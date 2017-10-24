@@ -67,6 +67,8 @@ public class MainController extends BaseController {
                 switch (msg.what) {
                     //todo 处理消息
 
+                    default:
+                        break;
                 }
             }
         }
@@ -83,20 +85,23 @@ public class MainController extends BaseController {
      * @param index
      */
     public void testWeakHashMap(int index) {
+        int code = 100000;
         switch (index) {
             case 1:
-                Map<Integer, byte[]> hashMap = new HashMap<Integer, byte[]>();
-                for (int i = 0; i < 100000; i++) {
+                Map<Integer, byte[]> hashMap = new HashMap<Integer, byte[]>(16);
+                for (int i = 0; i < code; i++) {
                     hashMap.put(i, new byte[i]);
                 }
                 Log.d("index == 1","已经执行完成了 "+hashMap.size());
                 break;
             case 2:
-                Map<Integer, byte[]> weakHashMap = new WeakHashMap<Integer, byte[]>();
-                for (int i = 0; i < 100000; i++) {
+                Map<Integer, byte[]> weakHashMap = new WeakHashMap<Integer, byte[]>(16);
+                for (int i = 0; i < code; i++) {
                     weakHashMap.put(i, new byte[i]);
                 }
                 Log.d("index == 2","已经执行完成了 "+weakHashMap.size());
+                break;
+            default:
                 break;
         }
     }

@@ -42,6 +42,8 @@ public class TestActivity extends BaseControllerActivity {
                 break;
             case R.id.result:
                 break;
+            default:
+                break;
         }
     }
 }

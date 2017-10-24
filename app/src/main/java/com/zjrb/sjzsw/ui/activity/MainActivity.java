@@ -40,7 +40,6 @@ public class MainActivity extends BaseControllerActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn:
-//                mainController.testWeakHashMap(2);
                 mainController.getGrils("9ea08bbe593c23393780a4d5a7fa35cd", 50,
                         commonObserver = new CommonObserver(new OnResultCallBack<GirlList>() {
                             @Override
@@ -62,6 +61,8 @@ public class MainActivity extends BaseControllerActivity {
             case R.id.result:
                 startActivity(new Intent(MainActivity.this,TestActivity.class));
                 finish();
+                break;
+            default:
                 break;
         }
     }

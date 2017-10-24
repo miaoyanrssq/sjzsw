@@ -2,6 +2,7 @@ package com.zjrb.sjzsw.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -49,7 +50,7 @@ public class AppUtil {
         for (int i = 0; i < paklist.size(); i++) {
             PackageInfo pak = (PackageInfo) paklist.get(i);
             //判断是否为非系统预装的应用程序
-            if ((pak.applicationInfo.flags & pak.applicationInfo.FLAG_SYSTEM) <= 0) {
+            if ((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
                 // customs applications
                 apps.add(pak);
             }
@@ -83,7 +84,8 @@ public class AppUtil {
      */
     public static boolean isAvilible(Context context, String packageName) {
         List<PackageInfo> pinfo = getAllAppsNoSystem(context);
-        List<String> pName = new ArrayList<String>();//用于存储所有已安装程序的包名
+        //用于存储所有已安装程序的包名
+        List<String> pName = new ArrayList<String>();
         //从pinfo中将包名字逐一取出，压入pName list中
         if (pinfo != null) {
             for (int i = 0; i < pinfo.size(); i++) {
@@ -91,6 +93,7 @@ public class AppUtil {
                 pName.add(pn);
             }
         }
-        return pName.contains(packageName);//判断pName中是否有目标程序的包名，有TRUE，没有FALSE
+        //判断pName中是否有目标程序的包名，有TRUE，没有FALSE
+        return pName.contains(packageName);
     }
 }

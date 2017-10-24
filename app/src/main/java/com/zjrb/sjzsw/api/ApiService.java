@@ -14,6 +14,12 @@ import retrofit2.http.Query;
  */
 public interface ApiService {
 
+    /**
+     * 获取美女列表
+     * @param key
+     * @param num
+     * @return
+     */
     @GET("meinv/")
     Observable<GirlList> getGirls(@Query("key") String key, @Query("num") int num);
 

@@ -20,6 +20,10 @@ public abstract class BaseFragment extends Fragment {
     private ProgressDialog progressDialog;
     protected Context context;
 
+    /**
+     * 获取跟布局资源ID
+     * @return
+     */
     protected abstract int getLayoutId();
 
     @Override

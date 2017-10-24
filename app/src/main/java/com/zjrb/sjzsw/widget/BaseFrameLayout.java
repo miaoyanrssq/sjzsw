@@ -60,6 +60,10 @@ public abstract class BaseFrameLayout extends FrameLayout {
         }
     }
 
+    /**
+     * 获取组合布局的资源ID
+     * @return
+     */
     protected abstract int layoutId();
 
     protected void initView() {

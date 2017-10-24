@@ -28,8 +28,12 @@ public class ListUtil {
      */
     public static List<String> replaceSort(List<String> list){
         List<String> list2 = new ArrayList<String>();
-        if (isListEmpty(list))return list2;
-        if (list.size() == 1)return list;
+        if (isListEmpty(list)) {
+            return list2;
+        }
+        if (list.size() == 1) {
+            return list;
+        }
         for (int i = list.size()-1;i >= 0;i--){
             list2.add(list.get(i));
         }
@@ -40,8 +44,9 @@ public class ListUtil {
      * list是否为空
      */
     public static boolean isListEmpty(List<?> list) {
-        if (list == null || list.size() == 0)
+        if (list == null || list.size() == 0) {
             return true;
+        }
         return false;
     }
 

@@ -18,5 +18,9 @@ public abstract class BaseDataFrameLayout<T> extends BaseFrameLayout {
         super(context, attrs);
     }
 
+    /**
+     * 将数据填充到布局中
+     * @param data
+     */
     public abstract void update(T data);
 }

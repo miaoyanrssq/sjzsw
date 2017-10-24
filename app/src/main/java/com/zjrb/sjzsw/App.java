@@ -16,7 +16,9 @@ public class App extends Application {
         super.onCreate();
         HttpClient.init(this);
 
-        if (LeakCanary.isInAnalyzerProcess(this)) return;
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
         LeakCanary.install(this);
     }
 }

@@ -12,42 +12,44 @@ import com.jzf.net.Constant;
 public class SpUtil {
 
     /** SharedPreferences input */
-    public static void inputSP(Context mContext, String Key, Object object) {
-        if (null == object)return;
+    public static void inputSP(Context mContext, String key, Object object) {
+        if (null == object) {
+            return;
+        }
         @SuppressWarnings("static-access")
-        SharedPreferences preferences = mContext.getSharedPreferences(Constant.SP_FILE_NAME, mContext.MODE_PRIVATE);
+        SharedPreferences preferences = mContext.getSharedPreferences(Constant.SP_FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         if (object instanceof String) {
-            editor.putString(Key, (String) object);
+            editor.putString(key, (String) object);
         } else if (object instanceof Integer) {
-            editor.putInt(Key, (Integer) object);
+            editor.putInt(key, (Integer) object);
         } else if (object instanceof Boolean) {
-            editor.putBoolean(Key, (Boolean) object);
+            editor.putBoolean(key, (Boolean) object);
         } else if (object instanceof Float) {
-            editor.putFloat(Key, (Float) object);
+            editor.putFloat(key, (Float) object);
         } else if (object instanceof Long) {
-            editor.putLong(Key, (Long) object);
+            editor.putLong(key, (Long) object);
         } else {
-            editor.putString(Key, object.toString());
+            editor.putString(key, object.toString());
         }
         editor.commit();
     }
 
     /** SharedPreferences get */
-    public static Object getSP(Context mContext, String Key, Object defaultObject) {
+    public static Object getSP(Context mContext, String key, Object defaultObject) {
         @SuppressWarnings("static-access")
-        SharedPreferences sp = mContext.getSharedPreferences(Constant.SP_FILE_NAME, mContext.MODE_PRIVATE);
+        SharedPreferences sp = mContext.getSharedPreferences(Constant.SP_FILE_NAME, Context.MODE_PRIVATE);
 
         if (defaultObject instanceof String) {
-            return sp.getString(Key, (String) defaultObject);
+            return sp.getString(key, (String) defaultObject);
         } else if (defaultObject instanceof Integer) {
-            return sp.getInt(Key, (Integer) defaultObject);
+            return sp.getInt(key, (Integer) defaultObject);
         } else if (defaultObject instanceof Boolean) {
-            return sp.getBoolean(Key, (Boolean) defaultObject);
+            return sp.getBoolean(key, (Boolean) defaultObject);
         } else if (defaultObject instanceof Float) {
-            return sp.getFloat(Key, (Float) defaultObject);
+            return sp.getFloat(key, (Float) defaultObject);
         } else if (defaultObject instanceof Long) {
-            return sp.getLong(Key, (Long) defaultObject);
+            return sp.getLong(key, (Long) defaultObject);
         }
         return defaultObject;
     }
@@ -55,12 +57,12 @@ public class SpUtil {
     /**
      * 根据key删除数据
      * @param mContext
-     * @param Key
+     * @param key
      */
-    public static void deleteByKey(Context mContext,String Key) {
-        SharedPreferences preferences = mContext.getSharedPreferences(Constant.SP_FILE_NAME, mContext.MODE_PRIVATE);
+    public static void deleteByKey(Context mContext,String key) {
+        SharedPreferences preferences = mContext.getSharedPreferences(Constant.SP_FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.remove(Key);
+        editor.remove(key);
         editor.commit();
     }
 }
