@@ -38,7 +38,9 @@ public class CommonObserver<T> implements Observer<T> {
 
     @Override
     public void onComplete() {
-
+        if (mOnResultListener != null) {
+            mOnResultListener.onComplete();
+        }
     }
 
     public void unSubscribe() {

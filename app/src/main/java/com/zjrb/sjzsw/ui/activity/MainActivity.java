@@ -1,28 +1,42 @@
 package com.zjrb.sjzsw.ui.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.jzf.net.callback.OnResultCallBack;
 import com.jzf.net.exception.ApiException;
 import com.jzf.net.observer.CommonObserver;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.scwang.smartrefresh.layout.listener.OnRefreshLoadmoreListener;
+import com.zhy.adapter.recyclerview.CommonAdapter;
+import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zjrb.sjzsw.R;
 import com.zjrb.sjzsw.controller.MainController;
 import com.zjrb.sjzsw.entity.GirlList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 
 public class MainActivity extends BaseControllerActivity {
-    @BindView(R.id.result)
-    TextView result;
+    @BindView(R.id.recycle_view)
+    RecyclerView recycleView;
+    @BindView(R.id.refreshLayout)
+    SmartRefreshLayout refreshLayout;
     private CommonObserver commonObserver;
     private MainController mainController;
+    private List<GirlList.NewslistBean> beanList = new ArrayList<>();
+    private CommonAdapter commonAdapter = null;
 
     @Override
     protected int getLayoutId() {
@@ -34,60 +48,67 @@ public class MainActivity extends BaseControllerActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         registerController(mainController = new MainController(this));
+        initView();
     }
 
-    @OnClick({R.id.btn, R.id.result})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btn:
-                mainController.getGrils("9ea08bbe593c23393780a4d5a7fa35cd", 50,
-                        commonObserver = new CommonObserver(new OnResultCallBack<GirlList>() {
-                            @Override
-                            public void onSuccess(GirlList tb) {
-                                result.setText("");
-                                StringBuilder stringBuilder = new StringBuilder();
-                                for (GirlList.NewslistBean bean : tb.getNewslist()) {
-                                    stringBuilder.append(bean.getTitle() + "\n");
-                                }
-                                result.setText(stringBuilder.toString());
-                            }
+    private void initView() {
+        refreshLayout.autoRefresh();
+        refreshLayout.autoLoadmore();
+        refreshLayout.setRefreshHeader(new ClassicsHeader(this));
+        refreshLayout.setOnRefreshLoadmoreListener(new OnRefreshLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                getGirls();
+            }
 
-                            @Override
-                            public void onError(ApiException.ResponeThrowable e) {
-                                result.setText("onError: errorMsg:" + e.getMessage());
-                            }
-                        }));
-                break;
-            case R.id.result:
-                startActivity(new Intent(MainActivity.this,TestActivity.class));
-                finish();
-                break;
-            default:
-                break;
-        }
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                getGirls();
+            }
+        });
+
+        recycleView.setLayoutManager(new GridLayoutManager(this,2));
+        // TODO: 2017/10/25 动态设置style
+//        recycleView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
+        recycleView.setAdapter(commonAdapter = new CommonAdapter<GirlList.NewslistBean>(this, R.layout.item_main_list, beanList) {
+            @Override
+            protected void convert(ViewHolder holder, GirlList.NewslistBean newslistBean, int position) {
+                TextView tv = holder.getView(R.id.item_title);
+                ImageView itemImg = holder.getView(R.id.item_img);
+
+                tv.setText(newslistBean.getTitle());
+                Glide.with(context).load(newslistBean.getPicUrl()).placeholder(R.mipmap.img_defult).into(itemImg);
+            }
+        });
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            result.setText("");
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
+    private void getGirls() {
+        mainController.getGrils("9ea08bbe593c23393780a4d5a7fa35cd", 20,
+                commonObserver = new CommonObserver(new OnResultCallBack<GirlList>() {
+                    @Override
+                    public void onSuccess(GirlList tb) {
+                        beanList.addAll(tb.getNewslist());
+                        commonAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        refreshLayout.finishRefresh();
+                        refreshLayout.finishLoadmore();
+                    }
+
+                    @Override
+                    public void onError(ApiException.ResponeThrowable e) {
+                        Log.e("onError", "" + e.getMessage());
+                    }
+                }));
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (null != commonObserver){
+        if (null != commonObserver) {
             commonObserver.unSubscribe();
         }
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        Log.e("MainActivity","已经执行回收了");
-    }
 }
-
