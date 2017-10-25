@@ -20,6 +20,7 @@ public class LifecycleManage implements LifeCycle {
     }
 
     public void register(String key, LifeCycle lifeCycle) {
+        //只有put、get、size()方法来可以触发WeakHashMap来进行处理ReferenceQueue。
         lifeCycleMap.put(key, lifeCycle);
     }
 
