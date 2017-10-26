@@ -1,4 +1,4 @@
-package com.zjrb.sjzsw.widget;
+package com.zjrb.sjzsw.widget.baselayout;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -9,12 +9,12 @@ import android.util.AttributeSet;
  *
  * @param <T>
  */
-public abstract class BaseDataFrameLayout<T> extends BaseFrameLayout {
-    public BaseDataFrameLayout(Context context) {
+public abstract class BaseDataLinearLayout<T> extends BaseLinearLayout {
+    public BaseDataLinearLayout(Context context) {
         super(context);
     }
 
-    public BaseDataFrameLayout(Context context, AttributeSet attrs) {
+    public BaseDataLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

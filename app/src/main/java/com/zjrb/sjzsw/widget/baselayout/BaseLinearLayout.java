@@ -1,43 +1,37 @@
-package com.zjrb.sjzsw.widget;
+package com.zjrb.sjzsw.widget.baselayout;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.zjrb.sjzsw.listener.OnChildViewClickListener;
 
-import butterknife.ButterKnife;
-
 /**
- * Created by jinzifu on 2017/6/10.
+ * Created by jinzifu on 2017/6/5.
  */
 
-public abstract class BaseFrameLayout extends FrameLayout {
+public abstract class BaseLinearLayout extends LinearLayout {
     private Context context;
-
-    public BaseFrameLayout(@NonNull Context context) {
-        super(context);
-        init(context, null);
-    }
-
-    public BaseFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
-    }
-
     protected OnChildViewClickListener onChildViewClickListener;
 
+    public BaseLinearLayout(Context context) {
+        super(context);
+        init(context,null);
+    }
+
+    public BaseLinearLayout(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init(context,attrs);
+    }
 
     protected void init(Context context, AttributeSet attrs) {
         if (layoutId() != 0) {
             this.context = context;
             LayoutInflater.from(context).inflate(layoutId(), this, true);
-            ButterKnife.bind(this);
             initView();
             initListener();
             initData();
@@ -76,6 +70,6 @@ public abstract class BaseFrameLayout extends FrameLayout {
     }
 
     protected void toast(String string) {
-        Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, string,Toast.LENGTH_SHORT).show();
     }
 }
